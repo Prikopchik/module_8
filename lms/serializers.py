@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Lesson, CourseSubscription
+from .models import Course, Lesson, CourseSubscription, StripeProduct, StripePrice, PaymentSession
 from .validators import validate_youtube_url, YouTubeURLValidator
 
 
@@ -55,3 +55,48 @@ class CourseSubscriptionSerializer(serializers.ModelSerializer):
         # Устанавливаем пользователя из контекста запроса
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
+
+
+class StripeProductSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = StripeProduct
+        fields = ('id', 'course', 'stripe_product_id', 'name', 'description', 'created_at', 'updated_at')
+        read_only_fields = ('stripe_product_id', 'created_at', 'updated_at')
+
+
+class StripePriceSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = StripePrice
+        fields = ('id', 'product', 'stripe_price_id', 'amount', 'currency', 'is_active', 'created_at', 'updated_at')
+        read_only_fields = ('stripe_price_id', 'created_at', 'updated_at')
+
+
+class PaymentSessionSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = PaymentSession
+        fields = ('id', 'user', 'course', 'stripe_session_id', 'amount', 'currency', 'status', 'created_at', 'updated_at')
+        read_only_fields = ('user', 'stripe_session_id', 'status', 'created_at', 'updated_at')
+
+
+class CreateProductSerializer(serializers.Serializer):
+    """Сериализатор для создания продукта в Stripe"""
+    course_id = serializers.IntegerField()
+    name = serializers.CharField(max_length=255)
+    description = serializers.CharField(required=False, allow_blank=True)
+
+
+class CreatePriceSerializer(serializers.Serializer):
+    """Сериализатор для создания цены в Stripe"""
+    product_id = serializers.IntegerField()
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    currency = serializers.ChoiceField(choices=StripePrice.CURRENCY_CHOICES, default='usd')
+
+
+class CreatePaymentSessionSerializer(serializers.Serializer):
+    """Сериализатор для создания сессии оплаты"""
+    course_id = serializers.IntegerField()
+    success_url = serializers.URLField()
+    cancel_url = serializers.URLField()

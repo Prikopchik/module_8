@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
+    'drf_spectacular',
     'users',
     'lms',
 ]
@@ -139,6 +140,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
         'rest_framework.filters.SearchFilter',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 from datetime import timedelta
@@ -150,3 +152,18 @@ SIMPLE_JWT = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# drf-spectacular settings
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Learning Platform API',
+    'DESCRIPTION': 'API для платформы обучения с курсами, уроками и подписками',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': '/api/',
+}
+
+# Stripe settings
+STRIPE_PUBLISHABLE_KEY = 'pk_test_your_publishable_key_here'  # Замените на ваш ключ
+STRIPE_SECRET_KEY = 'sk_test_your_secret_key_here'  # Замените на ваш ключ
+STRIPE_WEBHOOK_SECRET = 'whsec_your_webhook_secret_here'  # Замените на ваш webhook secret

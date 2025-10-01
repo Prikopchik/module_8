@@ -4,3 +4,5 @@ Pillow==11.3.0
 django-filter==25.1
 requests==2.32.5
 djangorestframework-simplejwt==5.3.1
+drf-spectacular==0.27.2
+stripe==10.12.0

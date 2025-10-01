@@ -3,12 +3,61 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 from users.permissions import IsOwnerOrModerator, IsOwnerOrModeratorForCreate, IsOwnerOrModeratorForDelete
 from .models import Course, Lesson, CourseSubscription
 from .serializers import CourseSerializer, LessonSerializer, LessonListSerializer, CourseSubscriptionSerializer
 from .paginators import CoursePagination, LessonPagination, SubscriptionPagination
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Получить список курсов",
+        description="Возвращает пагинированный список курсов с информацией о подписке",
+        tags=["Курсы"]
+    ),
+    create=extend_schema(
+        summary="Создать курс",
+        description="Создает новый курс. Только авторизованные пользователи могут создавать курсы.",
+        tags=["Курсы"]
+    ),
+    retrieve=extend_schema(
+        summary="Получить курс",
+        description="Возвращает детальную информацию о курсе с признаком подписки",
+        tags=["Курсы"]
+    ),
+    update=extend_schema(
+        summary="Обновить курс",
+        description="Полное обновление курса. Доступно только владельцу или модератору.",
+        tags=["Курсы"]
+    ),
+    partial_update=extend_schema(
+        summary="Частично обновить курс",
+        description="Частичное обновление курса. Доступно только владельцу или модератору.",
+        tags=["Курсы"]
+    ),
+    destroy=extend_schema(
+        summary="Удалить курс",
+        description="Удаляет курс. Доступно только владельцу или модератору.",
+        tags=["Курсы"]
+    ),
+    lessons=extend_schema(
+        summary="Получить уроки курса",
+        description="Возвращает список уроков для конкретного курса",
+        tags=["Курсы"]
+    ),
+    subscribe=extend_schema(
+        summary="Подписаться на курс",
+        description="Подписывает текущего пользователя на обновления курса",
+        tags=["Курсы", "Подписки"]
+    ),
+    unsubscribe=extend_schema(
+        summary="Отписаться от курса",
+        description="Отписывает текущего пользователя от обновлений курса",
+        tags=["Курсы", "Подписки"]
+    ),
+)
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
@@ -116,6 +165,38 @@ class CourseViewSet(viewsets.ModelViewSet):
             )
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Получить список уроков",
+        description="Возвращает пагинированный список уроков",
+        tags=["Уроки"]
+    ),
+    create=extend_schema(
+        summary="Создать урок",
+        description="Создает новый урок. Ссылка на видео должна быть только с YouTube.",
+        tags=["Уроки"]
+    ),
+    retrieve=extend_schema(
+        summary="Получить урок",
+        description="Возвращает детальную информацию об уроке",
+        tags=["Уроки"]
+    ),
+    update=extend_schema(
+        summary="Обновить урок",
+        description="Полное обновление урока. Доступно только владельцу или модератору.",
+        tags=["Уроки"]
+    ),
+    partial_update=extend_schema(
+        summary="Частично обновить урок",
+        description="Частичное обновление урока. Доступно только владельцу или модератору.",
+        tags=["Уроки"]
+    ),
+    destroy=extend_schema(
+        summary="Удалить урок",
+        description="Удаляет урок. Доступно только владельцу или модератору.",
+        tags=["Уроки"]
+    ),
+)
 class LessonViewSet(viewsets.ModelViewSet):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
@@ -141,6 +222,38 @@ class LessonViewSet(viewsets.ModelViewSet):
         instance.delete()
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Получить список подписок",
+        description="Возвращает пагинированный список активных подписок пользователя",
+        tags=["Подписки"]
+    ),
+    create=extend_schema(
+        summary="Создать подписку",
+        description="Создает новую подписку на курс",
+        tags=["Подписки"]
+    ),
+    retrieve=extend_schema(
+        summary="Получить подписку",
+        description="Возвращает детальную информацию о подписке",
+        tags=["Подписки"]
+    ),
+    update=extend_schema(
+        summary="Обновить подписку",
+        description="Полное обновление подписки",
+        tags=["Подписки"]
+    ),
+    partial_update=extend_schema(
+        summary="Частично обновить подписку",
+        description="Частичное обновление подписки",
+        tags=["Подписки"]
+    ),
+    destroy=extend_schema(
+        summary="Удалить подписку",
+        description="Удаляет подписку (деактивирует)",
+        tags=["Подписки"]
+    ),
+)
 class CourseSubscriptionViewSet(viewsets.ModelViewSet):
     """
     ViewSet для управления подписками на курсы
