@@ -7,6 +7,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiPara
 from drf_spectacular.types import OpenApiTypes
 from users.permissions import IsOwnerOrModerator, IsOwnerOrModeratorForCreate, IsOwnerOrModeratorForDelete
 from .models import Course, Lesson, CourseSubscription
+from .tasks import send_course_update_email
 from .serializers import CourseSerializer, LessonSerializer, LessonListSerializer, CourseSubscriptionSerializer
 from .paginators import CoursePagination, LessonPagination, SubscriptionPagination
 
@@ -72,11 +73,14 @@ class CourseViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         # Только владельцы могут создавать курсы
-        serializer.save(owner=self.request.user)
+        course = serializer.save(owner=self.request.user)
+        # Уведомим подписчиков (если есть) об изменениях курса
+        send_course_update_email.delay(course.id, 'course', course.id)
     
     def perform_update(self, serializer):
         # Проверка прав доступа через permission class
-        serializer.save()
+        course = serializer.save()
+        send_course_update_email.delay(course.id, 'course', course.id)
     
     def perform_destroy(self, instance):
         # Проверка прав доступа через permission class
@@ -211,11 +215,13 @@ class LessonViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         # Только владельцы могут создавать уроки
-        serializer.save(owner=self.request.user)
+        lesson = serializer.save(owner=self.request.user)
+        send_course_update_email.delay(lesson.course_id, 'lesson', lesson.id)
     
     def perform_update(self, serializer):
         # Проверка прав доступа через permission class
-        serializer.save()
+        lesson = serializer.save()
+        send_course_update_email.delay(lesson.course_id, 'lesson', lesson.id)
     
     def perform_destroy(self, instance):
         # Проверка прав доступа через permission class

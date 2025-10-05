@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django_filters',
     'drf_spectacular',
+    'django_celery_beat',
     'users',
     'lms',
 ]
@@ -153,7 +155,7 @@ SIMPLE_JWT = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# drf-spectacular settings
+# Настройки drf-spectacular (генерация OpenAPI схемы и документации)
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Learning Platform API',
     'DESCRIPTION': 'API для платформы обучения с курсами, уроками и подписками',
@@ -163,7 +165,31 @@ SPECTACULAR_SETTINGS = {
     'SCHEMA_PATH_PREFIX': '/api/',
 }
 
-# Stripe settings
+# Настройки Stripe (используются тестовые значения)
 STRIPE_PUBLISHABLE_KEY = 'pk_test_your_publishable_key_here'  # Замените на ваш ключ
 STRIPE_SECRET_KEY = 'sk_test_your_secret_key_here'  # Замените на ваш ключ
 STRIPE_WEBHOOK_SECRET = 'whsec_your_webhook_secret_here'  # Замените на ваш webhook secret
+
+# Настройки Celery/Redis
+REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = True
+
+# Расписание Celery Beat (периодические задачи)
+from datetime import timedelta as _celery_timedelta
+CELERY_BEAT_SCHEDULE = {
+    'deactivate-inactive-users-daily': {
+        'task': 'lms.tasks.deactivate_inactive_users',
+        'schedule': _celery_timedelta(days=1),
+    },
+}
+
+# Настройки e-mail (консольный backend для разработки)
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'no-reply@example.com')
