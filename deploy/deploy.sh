@@ -10,7 +10,7 @@ echo "Начало деплоя..."
 # Переменные
 PROJECT_DIR="/var/www/learning-platform"
 VENV_DIR="$PROJECT_DIR/venv"
-REPO_URL="https://github.com/your-username/your-repo.git"  # Замените на ваш репозиторий
+REPO_URL="https://github.com/Prikopchik/module_8"  
 
 # Создание директории проекта
 if [ ! -d "$PROJECT_DIR" ]; then
@@ -21,7 +21,7 @@ fi
 
 cd $PROJECT_DIR
 
-# Клонирование репозитория (если еще не клонирован)
+# Клонирование репозитория 
 if [ ! -d ".git" ]; then
     echo "Клонирование репозитория..."
     git clone $REPO_URL .
