@@ -1,0 +1,23 @@
+[Unit]
+Description=Learning Platform Celery Worker
+After=network.target redis.service postgresql.service
+
+[Service]
+Type=forking
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/learning-platform
+Environment="PATH=/var/www/learning-platform/venv/bin"
+EnvironmentFile=/var/www/learning-platform/.env
+ExecStart=/var/www/learning-platform/venv/bin/celery \
+    -A learning_platform worker \
+    --loglevel=info \
+    --logfile=/var/log/learning-platform/celery-worker.log \
+    --pidfile=/var/run/celery-worker.pid \
+    --detach
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

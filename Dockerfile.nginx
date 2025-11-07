@@ -1,0 +1,10 @@
+FROM nginx:alpine
+
+# Копируем конфигурацию Nginx
+COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Создаем директории для статических файлов
+RUN mkdir -p /var/www/staticfiles
+RUN mkdir -p /var/www/media
+
+EXPOSE 80

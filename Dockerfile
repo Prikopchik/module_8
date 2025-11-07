@@ -27,5 +27,6 @@ USER appuser
 # Открываем порт
 EXPOSE 8000
 
-# Команда по умолчанию
+# Команда по умолчанию (для разработки)
+# В production используется gunicorn через docker-compose
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

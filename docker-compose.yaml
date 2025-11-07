@@ -31,16 +31,16 @@ services:
       timeout: 5s
       retries: 5
 
-  # Django приложение
+  # Django приложение (Gunicorn для production)
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn learning_platform.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
       - media_volume:/app/media
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     environment:
       - DEBUG=${DEBUG}
       - SECRET_KEY=${SECRET_KEY}
@@ -65,6 +65,21 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  # Nginx reverse proxy
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "80:80"
+    volumes:
+      - static_volume:/var/www/staticfiles:ro
+      - media_volume:/var/www/media:ro
+    depends_on:
+      web:
+        condition: service_healthy
+    restart: always
 
   # Инициализация базы данных (запускается один раз)
   init-db:

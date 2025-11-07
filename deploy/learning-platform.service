@@ -1,0 +1,22 @@
+[Unit]
+Description=Learning Platform Django Application
+After=network.target postgresql.service redis.service
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/learning-platform
+Environment="PATH=/var/www/learning-platform/venv/bin"
+ExecStart=/var/www/learning-platform/venv/bin/gunicorn \
+    --workers 3 \
+    --bind unix:/var/www/learning-platform/learning_platform.sock \
+    --access-logfile /var/log/learning-platform/access.log \
+    --error-logfile /var/log/learning-platform/error.log \
+    learning_platform.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
