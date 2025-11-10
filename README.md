@@ -5,7 +5,9 @@
 
 ## 🌐 Демо сервер
 
-**Адрес развернутого приложения**: `http://your-server-ip` (замените на ваш IP или домен)
+**Адрес развернутого приложения**: `http://158.160.123.240`
+
+**Сервер**: django-server (Yandex Cloud)
 
 > ⚠️ **Примечание**: Для доступа к приложению на удаленном сервере необходимо настроить переменные окружения и выполнить первоначальную настройку базы данных.
 
@@ -17,7 +19,9 @@
 - [Локальная разработка](#локальная-разработка-без-docker)
 
 > 📖 **Подробная инструкция по настройке сервера**: см. [SERVER_SETUP.md](SERVER_SETUP.md)  
-> ☁️ **Настройка в Yandex Cloud**: см. [YANDEX_CLOUD_SETUP.md](YANDEX_CLOUD_SETUP.md)
+> ☁️ **Настройка в Yandex Cloud**: см. [YANDEX_CLOUD_SETUP.md](YANDEX_CLOUD_SETUP.md)  
+> 🚀 **Быстрая настройка сервера**: см. [SETUP_SERVER.md](SETUP_SERVER.md)  
+> 🔒 **Информация о безопасности**: см. [SECURITY.md](SECURITY.md)
 
 ## Запуск через Docker Compose
 
@@ -39,9 +43,9 @@ DEBUG=True
 SECRET_KEY=your-secret-key-here
 
 # Настройки базы данных
-POSTGRES_DB=learning_platform
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
+POSTGRES_DB=drf_db
+POSTGRES_USER=drf_user
+POSTGRES_PASSWORD=password12345
 
 # Настройки Redis
 REDIS_URL=redis://redis:6379/0
@@ -237,7 +241,7 @@ sudo ufw enable
 
 # Настройка SSH (рекомендуется использовать ключи)
 ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
-ssh-copy-id username@your-server-ip
+ssh-copy-id username@158.160.123.240
 ```
 
 ### Шаг 3: Развертывание приложения
@@ -257,8 +261,9 @@ nano .env  # Отредактируйте файл с вашими настро�
 ```
 
 **Важно**: В файле `.env` укажите:
-- `ALLOWED_HOSTS` - ваш IP или домен сервера
+- `ALLOWED_HOSTS` - `158.160.123.240,localhost,127.0.0.1`
 - `DEBUG=False` - для production
+- Данные БД уже настроены: `drf_db` / `drf_user` / `password12345`
 - Все остальные переменные окружения
 
 ### Шаг 4: Запуск приложения
@@ -350,9 +355,9 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y python3 python3-pip python3-venv postgresql postgresql-contrib redis-server nginx git curl
 
 # Установка PostgreSQL
-sudo -u postgres psql -c "CREATE DATABASE learning_platform;"
-sudo -u postgres psql -c "CREATE USER learning_user WITH PASSWORD 'your_password';"
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE learning_platform TO learning_user;"
+sudo -u postgres psql -c "CREATE DATABASE drf_db;"
+sudo -u postgres psql -c "CREATE USER drf_user WITH PASSWORD 'password12345';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE drf_db TO drf_user;"
 ```
 
 ### Шаг 2: Настройка безопасности
@@ -369,7 +374,7 @@ sudo ufw enable
 ssh-keygen -t rsa -b 4096
 
 # Скопируйте публичный ключ на сервер:
-ssh-copy-id username@your-server-ip
+ssh-copy-id username@158.160.123.240
 ```
 
 ### Шаг 3: Развертывание приложения
@@ -503,7 +508,7 @@ tail -f /var/log/learning-platform/celery-worker.log
 1. Перейдите в **Settings** → **Secrets and variables** → **Actions**
 2. Добавьте следующие секреты:
 
-- `HOST` - IP-адрес или домен вашего сервера (например: `158.160.xxx.xxx`)
+- `HOST` - IP-адрес вашего сервера: `158.160.123.240`
 - `USERNAME` - Имя пользователя для SSH подключения (например: `ubuntu` или `root`)
 - `SSH_KEY` - Приватный SSH ключ для доступа к серверу (содержимое файла `~/.ssh/id_rsa`)
 - `PORT` - Порт SSH (обычно 22, можно не указывать если стандартный)
@@ -519,7 +524,7 @@ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
 cat ~/.ssh/id_rsa
 
 # Скопируйте публичный ключ на сервер:
-ssh-copy-id username@your-server-ip
+ssh-copy-id username@158.160.123.240
 ```
 
 ### Workflow файл
@@ -579,7 +584,7 @@ Workflow запускается автоматически при:
 
 2. **Проверьте подключение к серверу**
    ```bash
-   ssh username@your-server-ip
+   ssh username@158.160.123.240
    ```
 
 3. **Проверьте Docker на сервере**
