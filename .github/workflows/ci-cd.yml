@@ -49,9 +49,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: drf_db
+          POSTGRES_USER: drf_user
+          POSTGRES_PASSWORD: password12345
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -87,27 +87,27 @@ jobs:
       
       - name: Run migrations
         env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: drf_db
+          POSTGRES_USER: drf_user
+          POSTGRES_PASSWORD: password12345
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
           REDIS_URL: redis://localhost:6379/0
-          SECRET_KEY: test-secret-key-for-ci
-          DEBUG: "True"
+          SECRET_KEY: e!==l93n-h5&e!y67y8kxr2(%sk@@jpvf#r04s$2q4)u3s*yzp
+          DEBUG: "False"
         run: |
           python manage.py migrate
       
       - name: Run tests
         env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: drf_db
+          POSTGRES_USER: drf_user
+          POSTGRES_PASSWORD: password12345
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
           REDIS_URL: redis://localhost:6379/0
-          SECRET_KEY: test-secret-key-for-ci
-          DEBUG: "True"
+          SECRET_KEY: e!==l93n-h5&e!y67y8kxr2(%sk@@jpvf#r04s$2q4)u3s*yzp
+          DEBUG: "False"
           DJANGO_SETTINGS_MODULE: learning_platform.settings
         run: |
           python manage.py test --verbosity=2
