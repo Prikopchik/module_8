@@ -49,9 +49,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_DB: drf_db
-          POSTGRES_USER: drf_user
-          POSTGRES_PASSWORD: password12345
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -87,27 +87,27 @@ jobs:
       
       - name: Run migrations
         env:
-          POSTGRES_DB: drf_db
-          POSTGRES_USER: drf_user
-          POSTGRES_PASSWORD: password12345
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
           REDIS_URL: redis://localhost:6379/0
-          SECRET_KEY: e!==l93n-h5&e!y67y8kxr2(%sk@@jpvf#r04s$2q4)u3s*yzp
-          DEBUG: "False"
+          SECRET_KEY: test-secret-key-for-ci-only
+          DEBUG: "True"
         run: |
           python manage.py migrate
       
       - name: Run tests
         env:
-          POSTGRES_DB: drf_db
-          POSTGRES_USER: drf_user
-          POSTGRES_PASSWORD: password12345
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
           REDIS_URL: redis://localhost:6379/0
-          SECRET_KEY: e!==l93n-h5&e!y67y8kxr2(%sk@@jpvf#r04s$2q4)u3s*yzp
-          DEBUG: "False"
+          SECRET_KEY: test-secret-key-for-ci-only
+          DEBUG: "True"
           DJANGO_SETTINGS_MODULE: learning_platform.settings
         run: |
           python manage.py test --verbosity=2
@@ -167,7 +167,7 @@ jobs:
       - name: Add server to known hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts || true
           chmod 600 ~/.ssh/known_hosts
       
       - name: Update code on server
