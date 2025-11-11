@@ -49,9 +49,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB || 'test_db' }}
-          POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER || 'test_user' }}
-          POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD || 'test_password' }}
+          POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER  }}
+          POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -87,27 +87,27 @@ jobs:
       
       - name: Run migrations
         env:
-          POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB || 'test_db' }}
-          POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER || 'test_user' }}
-          POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD || 'test_password' }}
-          POSTGRES_HOST: ${{ secrets.TEST_POSTGRES_HOST || 'localhost' }}
-          POSTGRES_PORT: ${{ secrets.TEST_POSTGRES_PORT || '5432' }}
-          REDIS_URL: ${{ secrets.TEST_REDIS_URL || 'redis://localhost:6379/0' }}
-          SECRET_KEY: ${{ secrets.TEST_SECRET_KEY || 'test-secret-key-for-ci-only' }}
-          DEBUG: ${{ secrets.TEST_DEBUG || 'True' }}
+          POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD }}
+          POSTGRES_HOST: ${{ secrets.TEST_POSTGRES_HOST }}
+          POSTGRES_PORT: ${{ secrets.TEST_POSTGRES_PORT }}
+          REDIS_URL: ${{ secrets.TEST_REDIS_URL }}
+          SECRET_KEY: ${{ secrets.TEST_SECRET_KEY }}
+          DEBUG: ${{ secrets.TEST_DEBUG }}
         run: |
           python manage.py migrate
       
       - name: Run tests
         env:
-          POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB || 'test_db' }}
-          POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER || 'test_user' }}
-          POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD || 'test_password' }}
-          POSTGRES_HOST: ${{ secrets.TEST_POSTGRES_HOST || 'localhost' }}
-          POSTGRES_PORT: ${{ secrets.TEST_POSTGRES_PORT || '5432' }}
-          REDIS_URL: ${{ secrets.TEST_REDIS_URL || 'redis://localhost:6379/0' }}
-          SECRET_KEY: ${{ secrets.TEST_SECRET_KEY || 'test-secret-key-for-ci-only' }}
-          DEBUG: ${{ secrets.TEST_DEBUG || 'True' }}
+          POSTGRES_DB: ${{ secrets.TEST_POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.TEST_POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.TEST_POSTGRES_PASSWORD }}
+          POSTGRES_HOST: ${{ secrets.TEST_POSTGRES_HOST }}
+          POSTGRES_PORT: ${{ secrets.TEST_POSTGRES_PORT }}
+          REDIS_URL: ${{ secrets.TEST_REDIS_URL }}
+          SECRET_KEY: ${{ secrets.TEST_SECRET_KEY }}
+          DEBUG: ${{ secrets.TEST_DEBUG }}
           DJANGO_SETTINGS_MODULE: learning_platform.settings
         run: |
           python manage.py test --verbosity=2
@@ -191,17 +191,17 @@ jobs:
           port: ${{ secrets.PORT || 22 }}
           script: |
             cd ${{ secrets.PROJECT_PATH }}
-            echo "DEBUG=${{ secrets.DEBUG || 'False' }}" > .env
+            echo "DEBUG=${{ secrets.DEBUG }}" > .env
             echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
             echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> .env
             echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
             echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
             echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-            echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST || 'db' }}" >> .env
-            echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT || '5432' }}" >> .env
+            echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> .env
+            echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .env
             echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env
-            echo "EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND || 'django.core.mail.backends.console.EmailBackend' }}" >> .env
-            echo "DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL || 'alexgolovvlad@gmail.com' }}" >> .env
+            echo "EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }}" >> .env
+            echo "DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL }}" >> .env
             echo "STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}" >> .env
             echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env
             echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}" >> .env
